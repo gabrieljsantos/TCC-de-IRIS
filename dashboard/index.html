@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ai.css">
   <link rel="stylesheet" href="research.css">
+  <link rel="stylesheet" href="filter-ai.css">
 </head>
 <body>
   <aside class="sidebar">
@@ -94,6 +95,12 @@
     <section id="interpretacao" class="section ai-section">
       <div class="section-heading"><div><span class="section-number">06</span><h2>Interpretação assistida</h2></div><p>Concepções, perspectivas e possibilidades</p></div>
       <div class="ai-disclosure"><span class="ai-badge">IA</span><div><strong>Conteúdo gerado por inteligência artificial</strong><p>As proposições abaixo são hipóteses produzidas por IA. Não são falas dos participantes nem conclusões definitivas e precisam de validação da pesquisadora.</p></div></div>
+      <article class="filter-ai-panel">
+        <header><div><span class="live-dot"></span><strong>Análise IA da seleção atual</strong></div><span id="aiFilterLabel">Todos os dados</span></header>
+        <p id="aiFilterContext" class="filter-ai-context"></p>
+        <div id="aiFilterQuestions" class="filter-ai-questions"></div>
+        <p id="aiFilterCaution" class="filter-ai-caution"></p>
+      </article>
       <article class="ai-thesis"><span>Hipótese central</span><blockquote id="aiThesis"></blockquote></article>
       <div id="aiReadings" class="ai-readings"></div>
       <div class="grid two ai-footer">
