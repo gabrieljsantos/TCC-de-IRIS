@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Painel analítico das ações CinePET sobre inclusão.">
+  <title>CinePET — Painel de análise</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315202b'/%3E%3Cpath d='M14 43V22h7v21zm14 0V13h7v30zm14 0V28h7v15z' fill='%23ee7a4d'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="ai.css">
+  <link rel="stylesheet" href="research.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">C</span><div><strong>CinePET</strong><small>Análise da pesquisa</small></div></div>
+    <nav aria-label="Seções do painel">
+      <a href="#visao-geral" class="active">Visão geral</a>
+      <a href="#perfil">Perfil</a>
+      <a href="#temas">Temas</a>
+      <a href="#respostas">Respostas</a>
+      <a href="#transcricao">Transcrição</a>
+      <a href="#interpretacao">Interpretação IA</a>
+      <a href="#qualidade">Qualidade</a>
+    </nav>
+    <div class="sidebar-note"><span>Última atualização</span><strong id="updatedAt">—</strong></div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div><p class="eyebrow">Universidade Federal de Sergipe · Campus Professor Alberto Carvalho</p><h1>Concepções discentes sobre inclusão</h1><p class="research-objective">Analisar as concepções e compreensões dos discentes sobre inclusão, relacionando-as às perspectivas e possibilidades para uma educação inclusiva.</p></div>
+      <button id="exportBtn" class="button secondary">Exportar seleção CSV</button>
+    </header>
+
+    <section class="filter-panel" aria-label="Filtros">
+      <label>Evento<select id="filterEvent"><option value="">Todos os eventos</option></select></label>
+      <label>Curso<select id="filterCourse"><option value="">Todos os cursos</option></select></label>
+      <label>Período<select id="filterPeriod"><option value="">Todos os períodos</option></select></label>
+      <label>Sexo<select id="filterSex"><option value="">Todos</option></select></label>
+      <label>Tema<select id="filterTopic"><option value="">Todos os temas</option></select></label>
+      <label class="search-label">Buscar nas respostas<input id="filterSearch" type="search" placeholder="Ex.: respeito, inclusão, diferença"></label>
+      <button id="clearFilters" class="button ghost">Limpar filtros</button>
+    </section>
+
+    <section id="visao-geral" class="section">
+      <div class="section-heading"><div><span class="section-number">01</span><h2>Visão geral</h2></div><p id="filterSummary">Todos os registros</p></div>
+      <div class="kpi-grid">
+        <article class="kpi accent"><span>Participações</span><strong id="kpiRecords">0</strong><small>formulários aceitos</small></article>
+        <article class="kpi"><span>Respostas abertas</span><strong id="kpiAnswers">0</strong><small>textos disponíveis</small></article>
+        <article class="kpi"><span>Idade média</span><strong id="kpiAge">—</strong><small>anos</small></article>
+        <article class="kpi"><span>Atuação profissional</span><strong id="kpiWork">—</strong><small>dos registros filtrados</small></article>
+        <article class="kpi warning"><span>Pendências de dados</span><strong id="kpiIssues">0</strong><small>itens para revisão</small></article>
+      </div>
+      <div class="grid two">
+        <article class="panel"><div class="panel-title"><h3>Participações por evento</h3><span>clique para filtrar</span></div><div id="eventChart" class="bar-chart"></div></article>
+        <article class="panel"><div class="panel-title"><h3>Linha do tempo</h3><span>respostas por data</span></div><div id="timelineChart" class="bar-chart"></div></article>
+      </div>
+    </section>
+
+    <section id="perfil" class="section">
+      <div class="section-heading"><div><span class="section-number">02</span><h2>Perfil dos participantes</h2></div><p>Distribuições calculadas sobre a seleção atual</p></div>
+      <div class="grid three">
+        <article class="panel"><div class="panel-title"><h3>Faixas etárias</h3></div><div id="ageChart" class="bar-chart"></div></article>
+        <article class="panel"><div class="panel-title"><h3>Sexo</h3></div><div id="sexChart" class="donut-wrap"></div></article>
+        <article class="panel"><div class="panel-title"><h3>Período letivo</h3></div><div id="periodChart" class="bar-chart"></div></article>
+      </div>
+      <article class="panel wide"><div class="panel-title"><h3>Cursos</h3><span>grafia padronizada</span></div><div id="courseChart" class="bar-chart horizontal"></div></article>
+    </section>
+
+    <section id="temas" class="section">
+      <div class="section-heading"><div><span class="section-number">03</span><h2>Temas e linguagem</h2></div><p>Classificação automática para apoiar a leitura</p></div>
+      <div class="grid two theme-layout">
+        <article class="panel"><div class="panel-title"><h3>Frequência temática</h3><span>uma resposta pode conter vários temas</span></div><div id="topicChart" class="bar-chart horizontal"></div></article>
+        <article class="panel"><div class="panel-title"><h3>Vocabulário recorrente</h3><span>termos mais presentes</span></div><div id="wordCloud" class="word-cloud"></div></article>
+      </div>
+      <article class="panel wide"><div class="panel-title"><h3>Temas por evento</h3><span>proporção das menções</span></div><div class="table-scroll"><table id="topicMatrix"><thead></thead><tbody></tbody></table></div></article>
+    </section>
+
+    <section id="respostas" class="section">
+      <div class="section-heading"><div><span class="section-number">04</span><h2>Explorador de respostas</h2></div><p id="answerCount">0 resultados</p></div>
+      <div class="answer-layout">
+        <div id="answerList" class="answer-list"></div>
+        <aside id="answerDetail" class="answer-detail"><p>Selecione uma resposta para ler o conteúdo completo.</p></aside>
+      </div>
+    </section>
+
+    <section id="transcricao" class="section">
+      <div class="section-heading"><div><span class="section-number">05</span><h2>Transcrição</h2></div><p>Experimentação da teia de conceitos</p></div>
+      <article class="panel transcript-panel">
+        <div class="transcript-controls"><label>Participante<select id="speakerFilter"><option value="">Todos</option></select></label><label>Buscar fala<input id="speechSearch" type="search" placeholder="Digite uma palavra"></label></div>
+        <div id="transcriptList" class="transcript-list"></div>
+      </article>
+    </section>
+
+    <section id="interpretacao" class="section ai-section">
+      <div class="section-heading"><div><span class="section-number">06</span><h2>Interpretação assistida</h2></div><p>Concepções, perspectivas e possibilidades</p></div>
+      <div class="ai-disclosure"><span class="ai-badge">IA</span><div><strong>Conteúdo gerado por inteligência artificial</strong><p>As proposições abaixo são hipóteses produzidas por IA. Não são falas dos participantes nem conclusões definitivas e precisam de validação da pesquisadora.</p></div></div>
+      <article class="ai-thesis"><span>Hipótese central</span><blockquote id="aiThesis"></blockquote></article>
+      <div id="aiReadings" class="ai-readings"></div>
+      <div class="grid two ai-footer">
+        <article class="panel"><div class="panel-title"><h3>Síntese interpretativa gerada por IA</h3></div><p id="aiSummary" class="long-copy"></p></article>
+        <article class="panel"><div class="panel-title"><h3>Limites desta interpretação</h3></div><ul id="aiLimits" class="limits"></ul></article>
+      </div>
+      <div id="aiReferences" class="ai-references"></div>
+    </section>
+
+    <section id="qualidade" class="section">
+      <div class="section-heading"><div><span class="section-number">07</span><h2>Qualidade e rastreabilidade</h2></div><p>Bases originais preservadas</p></div>
+      <div class="grid two">
+        <article class="panel"><div class="panel-title"><h3>Inconsistências encontradas</h3><span id="issueCount">0 itens</span></div><div id="issueChart" class="bar-chart"></div></article>
+        <article class="panel audit"><div class="panel-title"><h3>Fontes processadas</h3></div><div id="sourceList"></div></article>
+      </div>
+      <article class="panel wide"><div class="panel-title"><h3>Dicionário de normalização</h3><span>original → tratado</span></div><div class="table-scroll"><table id="mappingTable"><thead><tr><th>Campo</th><th>Valor original</th><th>Valor tratado</th><th>Regra</th></tr></thead><tbody></tbody></table></div></article>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

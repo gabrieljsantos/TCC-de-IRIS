@@ -1,0 +1,42 @@
+# Materiais brutos, áudios e arquivos auxiliares
+/material/
+/.transcricoes-gemini/
+
+# Ambientes virtuais e caches Python
+/.venv-transcricao/
+/.venv-whisperx/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Bases originais com respostas e transcrições
+/*.xlsx
+/*.xls
+/*.doc
+/*.docx
+/trascrição.txt
+
+# Dados derivados intermediários
+/dados_tratados/
+
+# O dashboard/data.js é versionado para publicação no GitHub Pages.
+
+# Mídias, pacotes e temporários
+*.m4a
+*.mp3
+*.wav
+*.zip
+*.tmp
+*.temp
+*.log
+~$*
+
+# Arquivos do sistema e editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

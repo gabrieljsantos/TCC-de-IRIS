@@ -1,0 +1,12 @@
+.research-objective {
+  max-width: 860px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font: 15px/1.5 Georgia, serif;
+}
+
+@media (max-width: 800px) {
+  .research-objective {
+    font-size: 14px;
+  }
+}
