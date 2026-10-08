@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Transcrição indexada da reflexão sobre Wicked, sincronizada com o áudio completo.">
+  <title>Reflexão sobre Wicked — Transcrição</title>
+  <link rel="stylesheet" href="transcricao.css">
+</head>
+<body data-page="reflexao">
+  <header class="page-header">
+    <a class="back-link" href="../../index.html">← Recursos da pesquisa</a>
+    <div class="title-row"><div><p class="eyebrow">Transcrição indexada</p><h1>Reflexão sobre Wicked</h1><p class="subtitle">Falas com tempos absolutos do áudio completo e identificação por participante.</p></div></div>
+  </header>
+  <main class="layout">
+    <section class="player-panel" aria-label="Reprodutor e controles da transcrição">
+      <div class="player-topline"><label for="audioSource">Áudio</label><select id="audioSource"><option value="reflexao">Reflexão · áudio completo</option></select></div>
+      <audio id="audioPlayer" controls preload="metadata"></audio>
+      <div class="player-status"><span id="currentTime">00:00:00.000</span><span id="playerMessage" aria-live="polite">Escolha uma fala ou reproduza o áudio.</span></div>
+      <div class="playback-key" aria-label="Legenda dos controles das falas">
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Toca só esta fala</span>
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14l9-7zM12 5v14l9-7z"/></svg>Toca desta fala em diante</span>
+      </div>
+      <div class="participant-legend"><strong>Participantes</strong><div id="participantLegend" class="legend-items"><span>Carregando índice…</span></div></div>
+      <div class="transcript-tools"><label>Participante<select id="participantFilter"><option value="">Todos</option></select></label><label class="search-field">Buscar fala<input id="searchTranscript" type="search" placeholder="Digite um trecho"></label></div>
+      <p class="result-count" id="resultCount">Carregando transcrição…</p>
+    </section>
+    <section class="transcript-scroll" aria-label="Transcrição com rolagem"><div id="transcriptList" class="transcript-list" aria-label="Lista de falas"></div></section>
+    <section class="embedded-analysis" aria-labelledby="analysis-heading">
+      <h2 id="analysis-heading">Análise da transcrição</h2>
+      <section id="analysisMetrics" class="analysis-metrics" aria-label="Estatísticas gerais"></section>
+      <div class="analysis-grid">
+        <section class="analysis-panel"><h3>Nuvem de palavras</h3><div id="wordCloud" class="transcript-word-cloud"></div></section>
+        <section class="analysis-panel"><h3>Termos mais frequentes</h3><div id="topTerms" class="analysis-bars"></div></section>
+        <section class="analysis-panel"><h3>Combinações recorrentes</h3><div id="topPhrases" class="analysis-bars"></div></section>
+        <section class="analysis-panel"><h3>Temas recorrentes</h3><div id="topicStats" class="analysis-bars"></div></section>
+        <section class="analysis-panel speaker-panel"><h3>Participação por falante</h3><div class="table-scroll"><table><thead><tr><th>Participante</th><th>Falas</th><th>Palavras</th><th>Palavras (%)</th></tr></thead><tbody id="speakerStats"></tbody></table></div></section>
+      </div>
+      <p id="analysisStatus" class="analysis-status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="transcricao.js" defer></script>
+  <script src="analise-embutida.js" defer></script>
+</body>
+</html>

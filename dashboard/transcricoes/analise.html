@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Análise textual — Transcrições CinePET</title>
+  <link rel="stylesheet" href="../recursos.css">
+  <link rel="stylesheet" href="transcricao.css">
+  <link rel="stylesheet" href="analise.css">
+</head>
+<body data-resource="analise-transcricao">
+  <header class="resource-header">
+    <a id="backToTranscript" class="back-link" href="../../index.html">← Transcrição</a>
+    <p class="eyebrow">Análise textual</p>
+    <h1 id="analysisTitle">Transcrição</h1>
+  </header>
+  <main class="resource-main">
+    <section id="analysisMetrics" class="analysis-metrics" aria-label="Estatísticas gerais"></section>
+    <div class="analysis-grid">
+      <section class="analysis-panel"><h2>Nuvem de palavras</h2><div id="wordCloud" class="transcript-word-cloud"></div></section>
+      <section class="analysis-panel"><h2>Termos mais frequentes</h2><div id="topTerms" class="analysis-bars"></div></section>
+      <section class="analysis-panel"><h2>Combinações recorrentes</h2><div id="topPhrases" class="analysis-bars"></div></section>
+      <section class="analysis-panel"><h2>Temas recorrentes</h2><div id="topicStats" class="analysis-bars"></div></section>
+      <section class="analysis-panel speaker-panel"><h2>Participação por falante</h2><div class="table-scroll"><table><thead><tr><th>Participante</th><th>Falas</th><th>Palavras</th><th>Palavras (%)</th></tr></thead><tbody id="speakerStats"></tbody></table></div></section>
+    </div>
+    <p id="analysisStatus" class="analysis-status" aria-live="polite"></p>
+  </main>
+  <script src="analise.js" defer></script>
+</body>
+</html>

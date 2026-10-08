@@ -5,6 +5,7 @@
 # Ambientes virtuais e caches Python
 /.venv-transcricao/
 /.venv-whisperx/
+/.venv-audio/
 .venv/
 venv/
 __pycache__/
@@ -29,6 +30,13 @@ __pycache__/
 *.m4a
 *.mp3
 *.wav
+# Apenas os MP3 otimizados e os dados web das transcrições são versionados.
+!/dashboard/media/
+!/dashboard/media/*.mp3
+!/dashboard/transcricoes/dados/
+!/dashboard/transcricoes/dados/*.json
+!/dashboard/recursos/
+!/dashboard/recursos/*.json
 *.zip
 *.tmp
 *.temp

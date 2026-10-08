@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Respostas dos questionários — CinePET</title>
+  <link rel="stylesheet" href="recursos.css">
+</head>
+<body data-resource="respostas">
+  <header class="resource-header"><a class="back-link" href="../index.html">← Recursos da pesquisa</a><p class="eyebrow">Questionários</p><h1>Respostas</h1></header>
+  <main class="resource-main">
+    <section class="resource-controls" aria-label="Filtros das respostas">
+      <label>Evento<select id="eventFilter"><option value="">Todos os eventos</option></select></label>
+      <label>Questão<select id="questionFilter"><option value="">Todas as questões</option></select></label>
+      <label>Buscar<input id="answerSearch" type="search" placeholder="Texto, tema ou questão"></label>
+    </section>
+    <p id="resourceCount" class="resource-count">Carregando…</p>
+    <section id="resourceContent" class="answer-list" aria-label="Respostas"></section>
+  </main>
+  <script src="recursos.js" defer></script>
+</body>
+</html>

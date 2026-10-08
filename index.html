@@ -2,15 +2,49 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Dashboard da pesquisa sobre concepções discentes e educação inclusiva.">
-  <meta http-equiv="refresh" content="0; url=dashboard/">
-  <title>Concepções discentes sobre inclusão</title>
-  <script>
-    window.location.replace('dashboard/' + window.location.hash);
-  </script>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Menu de acesso ao dashboard, questionários, respostas, análises e transcrições da pesquisa CinePET.">
+  <title>CinePET — Recursos da pesquisa</title>
+  <link rel="stylesheet" href="dashboard/portal.css">
 </head>
 <body>
-  <p>Abrindo o <a href="dashboard/">dashboard da pesquisa</a>…</p>
+  <main class="portal">
+    <p class="eyebrow">Universidade Federal de Sergipe · Campus Professor Alberto Carvalho</p>
+    <span class="brand-mark" aria-hidden="true">C</span>
+    <h1>Pesquisa CinePET</h1>
+    <p class="intro">Selecione um recurso.</p>
+
+    <section class="resource-group" aria-labelledby="transcription-heading">
+      <h2 id="transcription-heading">Transcrições</h2>
+      <nav class="resource-list" aria-label="Transcrições">
+        <a class="resource-card legacy" href="dashboard/transcricoes/antiga.html">
+          <span class="resource-icon" aria-hidden="true">01</span>
+          <span><strong>Transcrição no modo antigo</strong></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="resource-card" href="dashboard/transcricoes/perigo-historia-unica.html">
+          <span class="resource-icon" aria-hidden="true">02</span>
+          <span><strong>O Perigo de uma História Única</strong><small>Nova transcrição indexada · posições 1 e 2</small></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="resource-card" href="dashboard/transcricoes/reflexao-wicked.html">
+          <span class="resource-icon" aria-hidden="true">03</span>
+          <span><strong>Reflexão sobre Wicked</strong><small>Nova transcrição indexada · áudio completo</small></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </section>
+
+    <section class="resource-group" aria-labelledby="research-heading">
+      <h2 id="research-heading">Questionários, respostas e análises</h2>
+      <nav class="resource-list compact" aria-label="Recursos de pesquisa">
+        <a class="resource-card" href="dashboard/index.html#visao-geral"><span class="resource-icon" aria-hidden="true">04</span><span><strong>Dashboard geral</strong><small>Participações, eventos e linha do tempo</small></span><span class="arrow" aria-hidden="true">→</span></a>
+        <a class="resource-card" href="dashboard/respostas.html"><span class="resource-icon" aria-hidden="true">05</span><span><strong>Ver respostas dos questionários</strong><small>Respostas abertas, busca e filtros</small></span><span class="arrow" aria-hidden="true">→</span></a>
+        <a class="resource-card" href="dashboard/palavras.html"><span class="resource-icon" aria-hidden="true">06</span><span><strong>Nuvem de palavras e temas</strong><small>Vocabulário recorrente e frequência temática</small></span><span class="arrow" aria-hidden="true">→</span></a>
+        <a class="resource-card" href="dashboard/proporcoes.html"><span class="resource-icon" aria-hidden="true">07</span><span><strong>Proporções por questão</strong><small>Respostas por pergunta e evento</small></span><span class="arrow" aria-hidden="true">→</span></a>
+        <a class="resource-card" href="dashboard/index.html"><span class="resource-icon" aria-hidden="true">08</span><span><strong>Dashboard completo</strong><small>Visão geral, perfil, qualidade e análises</small></span><span class="arrow" aria-hidden="true">→</span></a>
+      </nav>
+    </section>
+  </main>
 </body>
 </html>

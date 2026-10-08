@@ -23,15 +23,21 @@ python scripts/atualizar_dados.py
 
 O processamento atualiza `dados_tratados/` e `dashboard/data.js`.
 
-## Abrir o painel
+## Abrir o site
 
-Abra `dashboard/index.html` no navegador. Se o navegador restringir arquivos locais, inicie um servidor somente neste computador:
+A página inicial `index.html` funciona como menu para recursos em páginas separadas: transcrições, análises textuais dos três corpora, respostas, nuvem de palavras, proporções por questão e dashboard completo.
+
+Para usar as transcrições sincronizadas com o áudio, inicie o servidor na pasta raiz do projeto:
 
 ```bash
-python -m http.server 8765 --bind 127.0.0.1 --directory dashboard
+python -m http.server 8765 --bind 127.0.0.1
 ```
 
-Depois acesse `http://127.0.0.1:8765/`.
+Depois acesse `http://127.0.0.1:8765/`. O botão “Recursos da pesquisa” no painel e nas páginas novas retorna ao menu.
+
+As páginas usam dados exportados em `dashboard/recursos/dados.json` e `dashboard/transcricoes/dados/`, além dos MP3 em `dashboard/media/`. Para recriar os dados JSON a partir das fontes, execute `python scripts/exportar_transcricoes_web.py`.
+
+As análises linguísticas das transcrições novas aparecem após a lista de falas. Para gerar/atualizar os indicadores com o dicionário morfológico português brasileiro, execute `python scripts/analisar_transcricoes.py` (requer `hunspell` e o dicionário `pt_BR`).
 
 ## Saídas
 
