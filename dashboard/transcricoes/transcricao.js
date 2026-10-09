@@ -2,6 +2,7 @@
   const page = document.body.dataset.page;
   const configs = {
     posicoes: {
+      citationTitle: 'O Perigo de uma História Única',
       data: 'dados/perigo-historia-unica.json',
       index: 'dados/indice-perigo-historia-unica.json',
       tracks: {
@@ -10,6 +11,7 @@
       },
     },
     reflexao: {
+      citationTitle: 'Reflexão sobre Wicked',
       data: 'dados/reflexao-wicked.json',
       index: 'dados/indice-reflexao-wicked.json',
       tracks: {
@@ -29,7 +31,15 @@
   const playerMessage = document.querySelector('#playerMessage');
   const resultCount = document.querySelector('#resultCount');
   const participantLegend = document.querySelector('#participantLegend');
+  const transcriptScroll = document.querySelector('.transcript-scroll');
+  const selectionCount = document.querySelector('#selectionCount');
+  const clearSelection = document.querySelector('#clearSelection');
+  const copySelection = document.querySelector('#copySelection');
+  const toggleGrouping = document.querySelector('#toggleGrouping');
   let rows = [];
+  let displayRows = [];
+  let groupingEnabled = true;
+  const selectedIds = new Set();
   let participantNames = new Map();
   let participantColors = new Map();
   let activeId = null;
@@ -94,16 +104,15 @@
     });
   }
 
-  function visibleRows() {
-    const pid = participantFilter.value;
-    const query = normalizeText(searchInput.value.trim());
-    return rows.filter(row => (!pid || row.pid === pid)
-      && (!query || normalizeText(row.texto).includes(query)));
-  }
-
   function renderRows() {
-    const items = visibleRows();
-    resultCount.textContent = `${items.length.toLocaleString('pt-BR')} de ${rows.length.toLocaleString('pt-BR')} falas`;
+    const items = displayRows.filter(row => {
+      const selectedParticipant = participantFilter.value;
+      const query = normalizeText(searchInput.value.trim());
+      return (!selectedParticipant || row.pid === selectedParticipant)
+        && (!query || normalizeText(row.texto).includes(query));
+    });
+    const unit = groupingEnabled ? 'blocos' : 'falas';
+    resultCount.textContent = `${items.length.toLocaleString('pt-BR')} de ${displayRows.length.toLocaleString('pt-BR')} ${unit}`;
     list.replaceChildren();
     if (!items.length) {
       const empty = document.createElement('p');
@@ -116,10 +125,13 @@
     items.forEach(row => {
       const article = document.createElement('article');
       article.className = 'speech';
+      if (selectedIds.has(row.id)) article.classList.add('is-selected');
       article.dataset.id = row.id;
       article.dataset.start = row.startMs;
       article.dataset.end = row.endMs;
       article.style.setProperty('--speaker-color', participantColors.get(row.pid) || palette[0]);
+      article.tabIndex = 0;
+      article.setAttribute('aria-label', `${participantNames.get(row.pid) || 'Pessoa não identificada'}: ${row.texto}. Clique no bloco para selecionar.`);
 
       const meta = document.createElement('div');
       meta.className = 'speaker-cell';
@@ -140,8 +152,8 @@
       confidence.textContent = `confiança ${row.confidence}%`;
       const segmentId = document.createElement('span');
       segmentId.className = 'speech-id';
-      segmentId.textContent = row.id;
-      segmentId.title = `ID da fala: ${row.id}`;
+      segmentId.textContent = row.sourceRows.length > 1 ? `${row.sourceRows.length} falas agrupadas` : row.id;
+      segmentId.title = row.sourceRows.map(source => source.id).join(', ');
       details.append(participantId, confidence, time, segmentId);
       meta.append(participant, details);
 
@@ -169,10 +181,135 @@
       speechCell.className = 'speech-cell';
       speechCell.append(text, actions);
       article.append(meta, speechCell);
+      article.addEventListener('click', event => {
+        if (event.target.closest('button')) return;
+        toggleSelection(row, article);
+      });
+      article.addEventListener('keydown', event => {
+        if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('button')) {
+          event.preventDefault();
+          toggleSelection(row, article);
+        }
+      });
       fragment.append(article);
     });
     list.append(fragment);
-    setActive(activeId, false);
+    const previousActiveId = activeId;
+    activeId = null;
+    setActive(previousActiveId, false);
+    updateSelectionControls();
+  }
+
+  function toggleGroupingMode() {
+    groupingEnabled = !groupingEnabled;
+    displayRows = groupingEnabled
+      ? groupConsecutiveRows(rows)
+      : rows.map(row => ({...row, sourceRows: [row], idEnd: row.id}));
+    selectedIds.clear();
+    toggleGrouping?.setAttribute('aria-pressed', String(!groupingEnabled));
+    if (toggleGrouping) toggleGrouping.textContent = groupingEnabled ? 'Desagrupar falas' : 'Agrupar falas';
+    playerMessage.textContent = groupingEnabled
+      ? 'Falas agrupadas em blocos próximos.'
+      : 'Falas exibidas individualmente.';
+    renderRows();
+  }
+
+  function toggleSelection(row, article) {
+    if (selectedIds.has(row.id)) {
+      selectedIds.delete(row.id);
+      article.classList.remove('is-selected');
+    } else {
+      selectedIds.add(row.id);
+      article.classList.add('is-selected');
+    }
+    updateSelectionControls();
+  }
+
+  function groupConsecutiveRows(sourceRows) {
+    const groups = [];
+    sourceRows.forEach(row => {
+      const previous = groups[groups.length - 1];
+      const gap = previous ? row.startMs - previous.endMs : Infinity;
+      const joinedText = previous ? `${previous.texto.trim()} ${row.texto.trim()}`.replace(/\s+/g, ' ').trim() : '';
+      const joinedDuration = previous ? row.endMs - previous.sourceRows[0].startMs : Infinity;
+      if (previous && previous.pid === row.pid && gap >= -120 && gap <= 550
+          && previous.sourceRows.length < 3 && joinedDuration <= 20_000 && joinedText.length <= 320) {
+        previous.sourceRows.push(row);
+        previous.endMs = Math.max(previous.endMs, row.endMs);
+        previous.texto = joinedText;
+        previous.idEnd = row.id;
+        previous.posicao_1_fim_ms = row.posicao_1_fim_ms ?? row.posicao_1_fim ?? previous.posicao_1_fim_ms;
+        previous.posicao_2_fim_ms = row.posicao_2_fim_ms ?? row.posicao_2_fim ?? previous.posicao_2_fim_ms;
+        previous.confidence = Math.min(previous.confidence, row.confidence);
+      } else {
+        groups.push({...row, sourceRows: [row], idEnd: row.id});
+      }
+    });
+    return groups.map(group => ({
+      ...group,
+      id: group.sourceRows.length > 1 ? `${group.sourceRows[0].id}–${group.idEnd}` : group.sourceRows[0].id,
+      startMs: Math.min(...group.sourceRows.map(row => row.startMs)),
+      endMs: Math.max(...group.sourceRows.map(row => row.endMs)),
+    }));
+  }
+
+  function updateSelectionControls() {
+    const count = selectedIds.size;
+    if (selectionCount) selectionCount.textContent = `${count.toLocaleString('pt-BR')} ${count === 1 ? 'bloco selecionado' : 'blocos selecionados'}`;
+    if (copySelection) copySelection.disabled = count === 0;
+    if (clearSelection) clearSelection.disabled = count === 0;
+  }
+
+  function cancelSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('.speech.is-selected').forEach(node => node.classList.remove('is-selected'));
+    updateSelectionControls();
+  }
+
+  function citationText() {
+    const selected = displayRows.map((row, index) => ({row, index})).filter(item => selectedIds.has(item.row.id));
+    const groups = [];
+    selected.forEach(({row, index}) => {
+      const lastGroup = groups[groups.length - 1];
+      if (lastGroup && lastGroup.lastIndex === index - 1) {
+        lastGroup.rows.push(row);
+        lastGroup.lastIndex = index;
+      } else groups.push({rows: [row], firstIndex: index, lastIndex: index});
+    });
+    const excerpts = groups.map(group => {
+      const runs = [];
+      group.rows.forEach(row => {
+        const lastRun = runs[runs.length - 1];
+        if (lastRun && lastRun.pid === row.pid) {
+          lastRun.text += ` ${row.texto}`;
+          lastRun.endMs = row.endMs;
+        } else runs.push({pid: row.pid, text: row.texto, startMs: row.startMs, endMs: row.endMs});
+      });
+      return runs.map(run => {
+        const name = participantNames.get(run.pid) || 'Pessoa não identificada';
+        const speaker = run.pid === 'P03' && page === 'reflexao' ? 'Iris' : name;
+        return `“${run.text.trim()}” (${speaker.toLocaleUpperCase('pt-BR')}, [s. d.], ${formatMs(run.startMs)}–${formatMs(run.endMs)})`;
+      }).join(' ');
+    });
+    return excerpts.join('\n\n');
+  }
+
+  async function copyCitations() {
+    if (!selectedIds.size) return;
+    const text = citationText();
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const helper = document.createElement('textarea');
+      helper.value = text;
+      helper.style.position = 'fixed';
+      helper.style.opacity = '0';
+      document.body.append(helper);
+      helper.select();
+      document.execCommand('copy');
+      helper.remove();
+    }
+    playerMessage.textContent = 'Trechos e referências copiados.';
   }
 
   function seekAndPlay(trackKey, localStartMs, localEndMs, row, continueAfter) {
@@ -220,23 +357,26 @@
   }
 
   function setActive(id, scroll) {
-    if (activeId === id) return;
-    activeId = id;
+    const activeGroup = id && displayRows.find(group => group.sourceRows.some(row => row.id === id) || group.id === id);
+    const displayId = activeGroup?.id || null;
+    if (activeId === displayId) return;
+    activeId = displayId;
     document.querySelectorAll('.speech.is-active').forEach(node => {
       node.classList.remove('is-active');
       node.removeAttribute('aria-current');
     });
-    if (!id) return;
-    const node = [...document.querySelectorAll('.speech')].find(item => item.dataset.id === id);
+    if (!displayId) return;
+    const node = [...document.querySelectorAll('.speech')].find(item => item.dataset.id === displayId);
     if (!node) return;
     node.classList.add('is-active');
     node.setAttribute('aria-current', 'true');
     if (scroll) {
-      const panel = document.querySelector('.player-panel');
-      const panelBottom = panel ? Math.max(0, panel.getBoundingClientRect().bottom) : 0;
-      const visibleMiddle = panelBottom + Math.max(0, window.innerHeight - panelBottom) / 2;
-      const rowMiddle = node.getBoundingClientRect().top + node.getBoundingClientRect().height / 2;
-      window.scrollBy({ top: rowMiddle - visibleMiddle, behavior: 'smooth' });
+      const area = transcriptScroll;
+      if (!area) return;
+      const areaRect = area.getBoundingClientRect();
+      const rowRect = node.getBoundingClientRect();
+      const desiredTop = area.scrollTop + rowRect.top - areaRect.top + rowRect.height / 2 - area.clientHeight / 2;
+      area.scrollTo({top: desiredTop, behavior: 'smooth'});
     }
   }
 
@@ -284,16 +424,24 @@
 
   async function init() {
     try {
-      const [transcriptResponse, indexResponse] = await Promise.all([
-        fetch(config.data), fetch(config.index),
-      ]);
-      if (!transcriptResponse.ok || !indexResponse.ok) throw new Error('Não foi possível abrir os arquivos de transcrição e participantes.');
-      const [transcript, index] = await Promise.all([
-        transcriptResponse.json(), indexResponse.json(),
-      ]);
+      let transcript;
+      let index;
+      const bundled = window.CINEPET_TRANSCRIPTION_DATA;
+      if (bundled?.page === page) {
+        ({transcript, index} = bundled);
+      } else {
+        const [transcriptResponse, indexResponse] = await Promise.all([
+          fetch(config.data), fetch(config.index),
+        ]);
+        if (!transcriptResponse.ok || !indexResponse.ok) throw new Error('Os arquivos de transcrição não foram carregados. Abra pela página inicial do site ou sirva a pasta por HTTP.');
+        [transcript, index] = await Promise.all([
+          transcriptResponse.json(), indexResponse.json(),
+        ]);
+      }
       renderLegend(index);
       rows = (transcript.falas || []).map(normalizeSegment)
         .sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
+      displayRows = groupConsecutiveRows(rows);
       renderRows();
       if (sourceSelect.value && config.tracks[sourceSelect.value]) {
         const track = activeTrack();
@@ -314,5 +462,8 @@
   sourceSelect.addEventListener('change', changeTrack);
   player.addEventListener('timeupdate', updateActiveSpeech);
   player.addEventListener('seeked', updateActiveSpeech);
+  clearSelection?.addEventListener('click', cancelSelection);
+  copySelection?.addEventListener('click', copyCitations);
+  toggleGrouping?.addEventListener('click', toggleGroupingMode);
   init();
 })();

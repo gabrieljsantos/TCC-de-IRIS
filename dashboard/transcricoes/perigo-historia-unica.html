@@ -25,6 +25,7 @@
       <div class="transcript-tools"><label>Participante<select id="participantFilter"><option value="">Todos</option></select></label><label class="search-field">Buscar fala<input id="searchTranscript" type="search" placeholder="Digite um trecho"></label></div>
       <p class="result-count" id="resultCount">Carregando transcrição…</p>
     </section>
+    <div class="transcript-selection-tools"><span id="selectionCount" aria-live="polite">0 blocos selecionados</span><div class="selection-actions"><button id="toggleGrouping" type="button" aria-pressed="false">Desagrupar falas</button><button id="clearSelection" type="button" disabled>Cancelar seleção</button><button id="copySelection" type="button" disabled>Copiar citação ABNT</button></div></div>
     <section class="transcript-scroll" aria-label="Transcrição com rolagem"><div id="transcriptList" class="transcript-list" aria-label="Lista de falas"></div></section>
     <section class="embedded-analysis" aria-labelledby="analysis-heading">
       <h2 id="analysis-heading">Análise da transcrição</h2>
@@ -39,6 +40,8 @@
       <p id="analysisStatus" class="analysis-status" aria-live="polite"></p>
     </section>
   </main>
+  <script src="dados/dados-posicoes.js" defer></script>
+  <script src="dados/analises_textuais.js" defer></script>
   <script src="transcricao.js" defer></script>
   <script src="analise-embutida.js" defer></script>
 </body>

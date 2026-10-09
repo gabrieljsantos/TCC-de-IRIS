@@ -217,7 +217,11 @@ def main() -> None:
     lemmas = hunspell_lemmas(all_tokens)
     result = {key_name: analyze_corpus(corpus, lemmas) for key_name, corpus in corpora.items()}
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    serialized = json.dumps(result, ensure_ascii=False, separators=(",", ":"))
+    OUTPUT.write_text(serialized + "\n", encoding="utf-8")
+    safe_script_data = serialized.replace("</", "<\\/").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+    OUTPUT.with_suffix(".js").write_text(
+        f"window.CINEPET_TRANSCRIPT_ANALYSES = {safe_script_data};\n", encoding="utf-8")
     for corpus_id, analysis in result.items():
         metrics = analysis["metricas"]
         print(f"{corpus_id}: {metrics['falas']} falas, {metrics['tokens_reconhecidos']} tokens reconhecidos, {metrics['lemas_distintos']} lemas")

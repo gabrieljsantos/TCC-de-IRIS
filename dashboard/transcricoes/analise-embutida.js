@@ -39,11 +39,16 @@
     document.querySelector('#analysisStatus').textContent = data.metodo || '';
   }
 
-  fetch('dados/analises_textuais.json')
-    .then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar a análise textual.');
-      return response.json();
-    })
-    .then(analyses => render(analyses[corpus]))
-    .catch(error => { document.querySelector('#analysisStatus').textContent = error.message; });
+  const bundled = window.CINEPET_TRANSCRIPT_ANALYSES;
+  if (bundled?.[corpus]) {
+    render(bundled[corpus]);
+  } else {
+    fetch('dados/analises_textuais.json')
+      .then(response => {
+        if (!response.ok) throw new Error('Não foi possível carregar a análise textual.');
+        return response.json();
+      })
+      .then(analyses => render(analyses[corpus]))
+      .catch(error => { document.querySelector('#analysisStatus').textContent = error.message; });
+  }
 })();

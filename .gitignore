@@ -1,5 +1,8 @@
 # Materiais brutos, áudios e arquivos auxiliares
 /material/
+!/material/
+/material/*
+!/material/*.py
 /.transcricoes-gemini/
 
 # Ambientes virtuais e caches Python

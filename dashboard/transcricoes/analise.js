@@ -20,9 +20,12 @@
   }
 
   async function load() {
-    const response = await fetch('dados/analises_textuais.json');
-    if (!response.ok) throw new Error('Não foi possível carregar a análise textual.');
-    const analysis = await response.json();
+    let analysis = window.CINEPET_TRANSCRIPT_ANALYSES;
+    if (!analysis) {
+      const response = await fetch('dados/analises_textuais.json');
+      if (!response.ok) throw new Error('Não foi possível carregar a análise textual.');
+      analysis = await response.json();
+    }
     const data = analysis[new URLSearchParams(location.search).get('corpus')] || analysis.posicoes;
     render(data);
   }

@@ -21,6 +21,12 @@ def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
+def write_js(path: Path, variable: str, value: object) -> None:
+    encoded = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    encoded = encoded.replace("</", "<\\/").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+    path.write_text(f"window.{variable} = {encoded};\n", encoding="utf-8")
+
+
 def export_segments(source_path: Path, destination: Path, position_audio: bool = False) -> int:
     source = read_json(source_path)
     segments = []
@@ -86,12 +92,22 @@ def main() -> None:
     material = ROOT / "material"
     posicoes = material / "transcricao_evento_posicoes"
     reflexao = material / "transcricao_reflexao"
+    position_data = OUTPUT / "perigo-historia-unica.json"
+    reflection_data = OUTPUT / "reflexao-wicked.json"
+    position_index = OUTPUT / "indice-perigo-historia-unica.json"
+    reflection_index = OUTPUT / "indice-reflexao-wicked.json"
     counts = [
-        export_segments(posicoes / "transcricao_por_id.json", OUTPUT / "perigo-historia-unica.json", position_audio=True),
-        export_segments(reflexao / "transcricao_com_participantes.json", OUTPUT / "reflexao-wicked.json"),
+        export_segments(posicoes / "transcricao_por_id.json", position_data, position_audio=True),
+        export_segments(reflexao / "transcricao_com_participantes.json", reflection_data),
     ]
-    export_index(posicoes / "indice_participantes.json", OUTPUT / "indice-perigo-historia-unica.json")
-    export_index(reflexao / "indice_participantes.json", OUTPUT / "indice-reflexao-wicked.json")
+    export_index(posicoes / "indice_participantes.json", position_index)
+    export_index(reflexao / "indice_participantes.json", reflection_index)
+    write_js(OUTPUT / "dados-posicoes.js", "CINEPET_TRANSCRIPTION_DATA", {
+        "page": "posicoes", "transcript": read_json(position_data), "index": read_json(position_index),
+    })
+    write_js(OUTPUT / "dados-reflexao.js", "CINEPET_TRANSCRIPTION_DATA", {
+        "page": "reflexao", "transcript": read_json(reflection_data), "index": read_json(reflection_index),
+    })
     export_legacy_resources()
     print(f"Exportadas {counts[0]} falas de Posições e {counts[1]} falas de Reflexão para {OUTPUT}")
 
