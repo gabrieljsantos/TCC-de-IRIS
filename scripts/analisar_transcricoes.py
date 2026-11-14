@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analisa as três transcrições com reconhecimento morfológico pt_BR."""
+"""Analisa as transcrições com reconhecimento morfológico pt_BR."""
 
 from __future__ import annotations
 
@@ -60,6 +60,8 @@ def load_corpora() -> dict[str, dict]:
     positions_index = read_json(position_path / "indice_participantes.json")
     reflection = read_json(reflection_path / "transcricao_com_participantes.json")
     reflection_index = read_json(reflection_path / "indice_participantes.json")
+    access = read_json(ROOT / "dashboard" / "transcricoes" / "dados" / "falas-acesso.json")
+    access_index = read_json(ROOT / "dashboard" / "transcricoes" / "dados" / "indice-falas-acesso.json")
 
     def normalized_rows(data: dict, index: dict) -> tuple[list[dict], list[dict]]:
         names = {person["id"]: person["nome"] for person in index.get("participantes", [])}
@@ -72,6 +74,7 @@ def load_corpora() -> dict[str, dict]:
 
     position_rows, position_people = normalized_rows(positions, positions_index)
     reflection_rows, reflection_people = normalized_rows(reflection, reflection_index)
+    access_rows, access_people = normalized_rows(access, access_index)
     old_rows = [{
         "id": f"legado-{row.get('ordem', i + 1):04d}",
         "texto": row.get("fala", ""),
@@ -82,6 +85,7 @@ def load_corpora() -> dict[str, dict]:
         "antiga": {"falas": old_rows, "participantes": [{"id": name, "nome": name} for name in old_people]},
         "posicoes": {"falas": position_rows, "participantes": position_people},
         "reflexao": {"falas": reflection_rows, "participantes": reflection_people},
+        "acesso": {"falas": access_rows, "participantes": access_people},
     }
 
 

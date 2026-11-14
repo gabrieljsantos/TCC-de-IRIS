@@ -12,6 +12,10 @@
   }
 
   function render(data) {
+    if (!data) {
+      document.querySelector('#analysisStatus').textContent = 'Análise textual indisponível para esta transcrição.';
+      return;
+    }
     const metrics = data.metricas;
     const cards = [
       ['Falas', metrics.falas],

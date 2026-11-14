@@ -18,6 +18,17 @@
         reflexao: { src: '../media/reflexao-wicked.mp3', offsetMs: 0, label: 'Reflexão' },
       },
     },
+    acesso: {
+      citationTitle: 'Falas de ACESSO',
+      data: 'dados/falas-acesso.json',
+      index: 'dados/indice-falas-acesso.json',
+      tracks: {
+        'acesso-alana': { src: '../media/falas-acesso/acesso-01-alana-giselle-lesley.m4a', offsetMs: 0, label: '01 · Alana, Giselle e Lesley' },
+        'acesso-dayane': { src: '../media/falas-acesso/acesso-02-dayane-juliano-lara-laura.m4a', offsetMs: 0, label: '02 · Dayane, Juliano, Lara e Laura' },
+        'acesso-joao-vitor': { src: '../media/falas-acesso/acesso-03-joao-victor-luis-antonio-mathias-sergio-ysadora.m4a', offsetMs: 0, label: '03 · João Victor, Luís Antônio, Mathias, Sergio e Ysadora' },
+        'acesso-felipe-gabriel-jeanderson': { src: '../media/falas-acesso/acesso-04-felipe-gabriel-jeanderson.m4a', offsetMs: 0, label: '04 · Felipe, Gabriel e Jeanderson' },
+      },
+    },
   };
   const config = configs[page];
   if (!config) return;
@@ -78,7 +89,8 @@
       pid: segment.participante_id || segment.participante_indice || 'P00',
       startMs: Number(segment.inicio_ms ?? Math.round(Number(segment.inicio || 0) * 1000)),
       endMs: Number(segment.fim_ms ?? Math.round(Number(segment.fim || 0) * 1000)),
-      confidence: Number(segment.identificacao_confianca_percentual ?? 0),
+      confidence: segment.identificacao_confianca_percentual == null
+        ? null : Number(segment.identificacao_confianca_percentual),
     };
   }
 
@@ -122,7 +134,15 @@
       return;
     }
     const fragment = document.createDocumentFragment();
+    let previousAudioId = null;
     items.forEach(row => {
+      if (page === 'acesso' && row.audio_id !== previousAudioId) {
+        const heading = document.createElement('h2');
+        heading.className = 'transcript-audio-heading';
+        heading.textContent = config.tracks[row.audio_id]?.label || row.audio_id;
+        fragment.append(heading);
+        previousAudioId = row.audio_id;
+      }
       const article = document.createElement('article');
       article.className = 'speech';
       if (selectedIds.has(row.id)) article.classList.add('is-selected');
@@ -149,7 +169,7 @@
       time.title = `${formatMs(row.startMs)} – ${formatMs(row.endMs)}`;
       const confidence = document.createElement('span');
       confidence.className = 'speaker-confidence';
-      confidence.textContent = `confiança ${row.confidence}%`;
+      confidence.textContent = row.confidence == null ? 'identificação pendente' : `confiança ${row.confidence}%`;
       const segmentId = document.createElement('span');
       segmentId.className = 'speech-id';
       segmentId.textContent = row.sourceRows.length > 1 ? `${row.sourceRows.length} falas agrupadas` : row.id;
@@ -214,6 +234,10 @@
     renderRows();
   }
 
+  function rowsForCurrentAudio() {
+    return page === 'acesso' ? rows.filter(row => row.audio_id === currentTrackKey) : rows;
+  }
+
   function toggleSelection(row, article) {
     if (selectedIds.has(row.id)) {
       selectedIds.delete(row.id);
@@ -232,7 +256,7 @@
       const gap = previous ? row.startMs - previous.endMs : Infinity;
       const joinedText = previous ? `${previous.texto.trim()} ${row.texto.trim()}`.replace(/\s+/g, ' ').trim() : '';
       const joinedDuration = previous ? row.endMs - previous.sourceRows[0].startMs : Infinity;
-      if (previous && previous.pid === row.pid && gap >= -120 && gap <= 550
+      if (previous && previous.pid === row.pid && previous.audio_id === row.audio_id && gap >= -120 && gap <= 550
           && previous.sourceRows.length < 3 && joinedDuration <= 20_000 && joinedText.length <= 320) {
         previous.sourceRows.push(row);
         previous.endMs = Math.max(previous.endMs, row.endMs);
@@ -240,7 +264,8 @@
         previous.idEnd = row.id;
         previous.posicao_1_fim_ms = row.posicao_1_fim_ms ?? row.posicao_1_fim ?? previous.posicao_1_fim_ms;
         previous.posicao_2_fim_ms = row.posicao_2_fim_ms ?? row.posicao_2_fim ?? previous.posicao_2_fim_ms;
-        previous.confidence = Math.min(previous.confidence, row.confidence);
+        previous.confidence = previous.confidence == null || row.confidence == null
+          ? null : Math.min(previous.confidence, row.confidence);
       } else {
         groups.push({...row, sourceRows: [row], idEnd: row.id});
       }
@@ -271,7 +296,8 @@
     const groups = [];
     selected.forEach(({row, index}) => {
       const lastGroup = groups[groups.length - 1];
-      if (lastGroup && lastGroup.lastIndex === index - 1) {
+      if (lastGroup && lastGroup.lastIndex === index - 1
+          && lastGroup.rows[lastGroup.rows.length - 1].audio_id === row.audio_id) {
         lastGroup.rows.push(row);
         lastGroup.lastIndex = index;
       } else groups.push({rows: [row], firstIndex: index, lastIndex: index});
@@ -287,7 +313,8 @@
       });
       return runs.map(run => {
         const name = participantNames.get(run.pid) || 'Pessoa não identificada';
-        const speaker = run.pid === 'P03' && page === 'reflexao' ? 'Iris' : name;
+        const audioLabel = page === 'acesso' ? `${config.tracks[group.rows[0].audio_id]?.label} — ` : '';
+        const speaker = `${audioLabel}${name}`;
         return `“${run.text.trim()}” (${speaker.toLocaleUpperCase('pt-BR')}, [s. d.], ${formatMs(run.startMs)}–${formatMs(run.endMs)})`;
       }).join(' ');
     });
@@ -340,7 +367,7 @@
   }
 
   function playSegment(row, continueAfter) {
-    const selected = sourceSelect.value;
+    const selected = page === 'acesso' ? row.audio_id : sourceSelect.value;
     if (selected === 'posicao1') {
       if (row.posicao_1_inicio_ms == null || row.posicao_1_fim_ms == null) {
         playerMessage.textContent = 'Este trecho só existe na gravação Posição 2; troquei a fonte do áudio.';
@@ -382,17 +409,18 @@
 
   function updateActiveSpeech() {
     const t = eventTimeMs();
+    const timelineRows = rowsForCurrentAudio();
     let low = 0;
-    let high = rows.length;
+    let high = timelineRows.length;
     while (low < high) {
       const middle = (low + high) >>> 1;
-      if (rows[middle].startMs <= t) low = middle + 1;
+      if (timelineRows[middle].startMs <= t) low = middle + 1;
       else high = middle;
     }
     let found = null;
     for (let i = low - 1; i >= Math.max(0, low - 10); i -= 1) {
-      if (rows[i].startMs <= t && t <= rows[i].endMs) {
-        found = rows[i];
+      if (timelineRows[i].startMs <= t && t <= timelineRows[i].endMs) {
+        found = timelineRows[i];
         break;
       }
     }
@@ -410,6 +438,14 @@
     const next = config.tracks[nextKey];
     stopAtTrackMs = null;
     currentTrackKey = nextKey;
+    if (page === 'acesso') {
+      player.pause();
+      player.currentTime = 0;
+      selectedIds.clear();
+      participantFilter.value = '';
+      activeId = null;
+      renderRows();
+    }
     player.dataset.src = next.src;
     player.src = next.src;
     player.load();
@@ -440,7 +476,8 @@
       }
       renderLegend(index);
       rows = (transcript.falas || []).map(normalizeSegment)
-        .sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
+        .sort((a, b) => (a.audio_id || '').localeCompare(b.audio_id || '')
+          || a.startMs - b.startMs || a.endMs - b.endMs);
       displayRows = groupConsecutiveRows(rows);
       renderRows();
       if (sourceSelect.value && config.tracks[sourceSelect.value]) {

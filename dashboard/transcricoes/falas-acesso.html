@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Transcrições sincronizadas dos áudios do grupo Falas de ACESSO.">
+  <title>Falas de ACESSO — Transcrições</title>
+  <link rel="stylesheet" href="transcricao.css">
+</head>
+<body data-page="acesso">
+  <header class="page-header">
+    <a class="back-link" href="../../index.html">← Recursos da pesquisa</a>
+    <div class="title-row"><div><p class="eyebrow">Transcrições indexadas</p><h1>Falas de ACESSO</h1><p class="subtitle">Quatro áudios e suas falas em sequência. Os participantes permanecem com identificadores provisórios, sem nomes atribuídos.</p></div></div>
+  </header>
+  <main class="layout">
+    <section class="player-panel" aria-label="Reprodutor e controles da transcrição">
+      <div class="player-topline"><label for="audioSource">Áudio selecionado</label><select id="audioSource">
+        <option value="acesso-alana">01 · Alana, Giselle e Lesley</option>
+        <option value="acesso-dayane">02 · Dayane, Juliano, Lara e Laura</option>
+        <option value="acesso-joao-vitor">03 · João Victor, Luís Antônio, Mathias, Sergio e Ysadora</option>
+        <option value="acesso-felipe-gabriel-jeanderson">04 · Felipe, Gabriel e Jeanderson</option>
+      </select></div>
+      <audio id="audioPlayer" controls preload="metadata"></audio>
+      <div class="player-status"><span id="currentTime">00:00:00.000</span><span id="playerMessage" aria-live="polite">Escolha uma fala ou reproduza o áudio.</span></div>
+      <div class="playback-key" aria-label="Legenda dos controles das falas">
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Toca só esta fala</span>
+        <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14l9-7zM12 5v14l9-7z"/></svg>Toca deste ponto em diante</span>
+      </div>
+      <div class="participant-legend"><strong>Participantes</strong><div id="participantLegend" class="legend-items"><span>Carregando índice…</span></div></div>
+      <div class="transcript-tools"><label>Participante<select id="participantFilter"><option value="">Todos</option></select></label><label class="search-field">Buscar fala<input id="searchTranscript" type="search" placeholder="Digite um trecho"></label></div>
+      <p class="result-count" id="resultCount">Carregando transcrição…</p>
+      <p class="subtitle">Os horários foram fornecidos em segundos inteiros; o fim de cada trecho usa a marca seguinte e é aproximado.</p>
+    </section>
+    <div class="transcript-selection-tools"><span id="selectionCount" aria-live="polite">0 blocos selecionados</span><div class="selection-actions"><button id="toggleGrouping" type="button" aria-pressed="false">Desagrupar falas</button><button id="clearSelection" type="button" disabled>Cancelar seleção</button><button id="copySelection" type="button" disabled>Copiar citação ABNT</button></div></div>
+    <section class="transcript-scroll" aria-label="Transcrições em sequência com rolagem"><div id="transcriptList" class="transcript-list" aria-label="Lista de falas"></div></section>
+    <section class="embedded-analysis" aria-labelledby="analysis-heading">
+      <h2 id="analysis-heading">Análise das transcrições</h2>
+      <section id="analysisMetrics" class="analysis-metrics" aria-label="Estatísticas gerais"></section>
+      <div class="analysis-grid">
+        <section class="analysis-panel"><h3>Nuvem de palavras</h3><div id="wordCloud" class="transcript-word-cloud"></div></section>
+        <section class="analysis-panel"><h3>Termos mais frequentes</h3><div id="topTerms" class="analysis-bars"></div></section>
+        <section class="analysis-panel"><h3>Combinações recorrentes</h3><div id="topPhrases" class="analysis-bars"></div></section>
+        <section class="analysis-panel"><h3>Temas recorrentes</h3><div id="topicStats" class="analysis-bars"></div></section>
+        <section class="analysis-panel speaker-panel"><h3>Participação por falante</h3><div class="table-scroll"><table><thead><tr><th>Participante</th><th>Falas</th><th>Palavras</th><th>Palavras (%)</th></tr></thead><tbody id="speakerStats"></tbody></table></div></section>
+      </div>
+      <p id="analysisStatus" class="analysis-status" aria-live="polite"></p>
+    </section>
+  </main>
+  <script src="dados/dados-acesso.js" defer></script>
+  <script src="dados/analises_textuais.js" defer></script>
+  <script src="transcricao.js" defer></script>
+  <script src="analise-embutida.js" defer></script>
+</body>
+</html>

@@ -36,6 +36,9 @@ __pycache__/
 # Apenas os MP3 otimizados e os dados web das transcrições são versionados.
 !/dashboard/media/
 !/dashboard/media/*.mp3
+# Áudios da nova transcrição de ACESSO usados diretamente pelo player.
+!/dashboard/media/falas-acesso/
+!/dashboard/media/falas-acesso/*.m4a
 !/dashboard/transcricoes/dados/
 !/dashboard/transcricoes/dados/*.json
 !/dashboard/recursos/
