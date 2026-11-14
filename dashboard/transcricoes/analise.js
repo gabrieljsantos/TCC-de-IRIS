@@ -3,6 +3,7 @@
     antiga: {title: 'Transcrição no modo antigo', transcriptUrl: 'antiga.html'},
     posicoes: {title: 'O Perigo de uma História Única', transcriptUrl: 'perigo-historia-unica.html'},
     reflexao: {title: 'Reflexão sobre Wicked', transcriptUrl: 'reflexao-wicked.html'},
+    acesso: {title: 'Falas de ACESSO', transcriptUrl: 'falas-acesso.html'},
   };
   const source = sources[new URLSearchParams(location.search).get('corpus')] || sources.posicoes;
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));

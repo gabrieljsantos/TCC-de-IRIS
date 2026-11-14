@@ -10,7 +10,7 @@
 <body data-page="acesso">
   <header class="page-header">
     <a class="back-link" href="../../index.html">← Recursos da pesquisa</a>
-    <div class="title-row"><div><p class="eyebrow">Transcrições indexadas</p><h1>Falas de ACESSO</h1><p class="subtitle">Quatro áudios e suas falas em sequência. Os participantes permanecem com identificadores provisórios, sem nomes atribuídos.</p></div></div>
+    <div class="title-row"><div><p class="eyebrow">Transcrições indexadas</p><h1>Falas de ACESSO</h1><p class="subtitle">Quatro áudios e suas falas em sequência. Os participantes permanecem com identificadores provisórios, sem nomes atribuídos.</p></div><a class="analysis-link" href="analise.html?corpus=acesso">Ver análise</a></div>
   </header>
   <main class="layout">
     <section class="player-panel" aria-label="Reprodutor e controles da transcrição">
@@ -33,22 +33,8 @@
     </section>
     <div class="transcript-selection-tools"><span id="selectionCount" aria-live="polite">0 blocos selecionados</span><div class="selection-actions"><button id="toggleGrouping" type="button" aria-pressed="false">Desagrupar falas</button><button id="clearSelection" type="button" disabled>Cancelar seleção</button><button id="copySelection" type="button" disabled>Copiar citação ABNT</button></div></div>
     <section class="transcript-scroll" aria-label="Transcrições em sequência com rolagem"><div id="transcriptList" class="transcript-list" aria-label="Lista de falas"></div></section>
-    <section class="embedded-analysis" aria-labelledby="analysis-heading">
-      <h2 id="analysis-heading">Análise das transcrições</h2>
-      <section id="analysisMetrics" class="analysis-metrics" aria-label="Estatísticas gerais"></section>
-      <div class="analysis-grid">
-        <section class="analysis-panel"><h3>Nuvem de palavras</h3><div id="wordCloud" class="transcript-word-cloud"></div></section>
-        <section class="analysis-panel"><h3>Termos mais frequentes</h3><div id="topTerms" class="analysis-bars"></div></section>
-        <section class="analysis-panel"><h3>Combinações recorrentes</h3><div id="topPhrases" class="analysis-bars"></div></section>
-        <section class="analysis-panel"><h3>Temas recorrentes</h3><div id="topicStats" class="analysis-bars"></div></section>
-        <section class="analysis-panel speaker-panel"><h3>Participação por falante</h3><div class="table-scroll"><table><thead><tr><th>Participante</th><th>Falas</th><th>Palavras</th><th>Palavras (%)</th></tr></thead><tbody id="speakerStats"></tbody></table></div></section>
-      </div>
-      <p id="analysisStatus" class="analysis-status" aria-live="polite"></p>
-    </section>
   </main>
   <script src="dados/dados-acesso.js" defer></script>
-  <script src="dados/analises_textuais.js" defer></script>
   <script src="transcricao.js" defer></script>
-  <script src="analise-embutida.js" defer></script>
 </body>
 </html>

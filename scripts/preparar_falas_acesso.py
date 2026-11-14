@@ -109,7 +109,8 @@ def main() -> None:
         for index, block in enumerate(blocks):
             pid = f"{group['slug']}-P{block['speaker_number']:02d}"
             participant_name = (
-                "Gabriel" if group["slug"] == "AC04" and block["speaker_number"] == 1
+                "Gisele" if group["slug"] == "AC01" and block["speaker_number"] == 1
+                else "Gabriel" if group["slug"] == "AC04" and block["speaker_number"] == 1
                 else f"Participante {block['speaker_number']}"
             )
             participants[pid] = {"id": pid, "nome": participant_name}
